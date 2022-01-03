@@ -1,5 +1,9 @@
 function findAccountById(accounts, id) {
-  return accounts.find(account => {return account.id === id})
+  for(let i = 0; i<accounts.length; i++){
+    if(accounts[i].id === id){
+      return accounts[i]
+    }
+  }
 }
 
 function sortAccountsByLastName(accounts) {
@@ -23,19 +27,25 @@ function getTotalNumberOfBorrows(account, books) {
 }
 
 function getBooksPossessedByAccount(account, books, authors) {
-  let total = [];
-  books.forEach(book => {
-  if (book.borrows.find(item => item.id === account.id && !item.returned)){
-    total.push(book);
-  }
-})
-  console.log(total);
-  total.forEach(book => {
-    let anAuthor = authors.find(person => person.id === book.authorId);
-    book['author'] = anAuthor;
-  })
-  return total
+  const accountId = account.id;
+  let result = [];
+  result = books.filter((book) => {
+    return book.borrows.some((borrow) => borrow.id === accountId && !borrow.returned);
+  });
+  result = result.map((book) => {
+    const author = getAuthorById(authors, book.authorId);
+    const newBook = {
+      ...book,
+      author,
+    };
+    return newBook;
+  });
+  return result;
 }
+
+function getAuthorById (authors, id) {
+  return authors.find((author) => author.id === id);
+};
 
 module.exports = {
   findAccountById,

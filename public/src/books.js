@@ -7,20 +7,12 @@ function findBookById(books, id) {
 }
 
 function partitionBooksByBorrowedStatus(books) {
-  let available = [];
-  let unavailable = [];
-  const bookStatus = [];
-  books.forEach((book) => {
-    const isBookReturned = book.borrows[0].returned;
-    if(isBookReturned) {
-      unavailable.push(book);
-    } else {
-      available.push(book)
-    }
-  })
-  bookStatus.push(available)
-  bookStatus.push(unavailable)
-  return bookStatus
+  let total = [];
+  let returned = books.filter((book) => book.borrows[0].returned === true);
+  let unavailable = books.filter((book) => book.borrows[0].returned === false);
+  total.push(unavailable);
+  total.push(returned);
+  return total;
 }
 
 function getBorrowersForBook(book, accounts) {
@@ -28,9 +20,9 @@ function getBorrowersForBook(book, accounts) {
   let totalBorrow = book.borrows;
   totalBorrow.forEach(borrow => {
     let account = accounts.find(acc => acc.id === borrow.id)
-    let object = account;
-    object['returned'] = borrow.returned
-    total.push(object)
+    let obj = account;
+    obj['returned'] = borrow.returned
+    total.push(obj)
   })
   return total.slice(0, 10)
 }
